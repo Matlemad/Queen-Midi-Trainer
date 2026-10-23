@@ -29,6 +29,9 @@ export default function App() {
     [selectedId],
   )
 
+  const mutedSet = useMemo(() => new Set(player.mutedIds), [player.mutedIds])
+  const soloSet = useMemo(() => new Set(player.soloIds), [player.soloIds])
+
   const { load, getTempo, setTranspose: applyTranspose } = player
 
   useEffect(() => {
@@ -75,7 +78,8 @@ export default function App() {
           Pratica con le basi MIDI
         </h1>
         <p className="max-w-2xl text-muted">
-          Scegli una base, poi regola tonalità e tempo mentre suoni. Aggiungi file
+          Scegli una base, poi regola tonalità e tempo mentre suoni. Ogni traccia ha un timbro
+          distinto (chitarra, basso, batteria, ecc.). Aggiungi file
           <code className="mx-1 rounded bg-white/70 px-1.5 py-0.5 text-sm text-ink">
             .mid
           </code>
@@ -238,7 +242,75 @@ export default function App() {
                 <span>0</span>
                 <span>+6</span>
               </div>
+              <p className="text-xs text-muted">
+                La trasposizione non modifica la batteria (canale 10).
+              </p>
             </label>
+
+            {player.tracks.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="font-medium text-ink">Strumenti</h3>
+                  <span className="text-xs text-muted">{player.tracks.length} tracce</span>
+                </div>
+                <ul
+                  className="max-h-56 divide-y divide-line overflow-y-auto rounded-xl border border-line bg-white/80"
+                  aria-label="Tracce e strumenti"
+                >
+                  {player.tracks.map((track) => {
+                    const muted = mutedSet.has(track.id)
+                    const solo = soloSet.has(track.id)
+                    return (
+                      <li
+                        key={track.id}
+                        className="flex items-center gap-2 px-3 py-2 text-sm"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-medium text-ink">{track.label}</p>
+                          <p className="truncate text-xs text-muted">
+                            {track.isPercussion
+                              ? 'Batteria · canale 10'
+                              : `Ch ${track.channel + 1} · prog ${track.program}`}
+                            {' · '}
+                            {track.noteCount} note
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          disabled={!canControl}
+                          aria-pressed={muted}
+                          aria-label={muted ? `Riattiva ${track.label}` : `Silenzia ${track.label}`}
+                          onClick={() => player.toggleMute(track.id)}
+                          className={[
+                            'shrink-0 rounded-lg border px-2 py-1 text-xs font-medium transition',
+                            muted
+                              ? 'border-teal-700 bg-accent-soft text-ink'
+                              : 'border-line bg-paper text-muted hover:border-teal-600/40',
+                          ].join(' ')}
+                        >
+                          Mute
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!canControl}
+                          aria-pressed={solo}
+                          aria-label={solo ? `Togli solo da ${track.label}` : `Solo ${track.label}`}
+                          onClick={() => player.toggleSolo(track.id)}
+                          className={[
+                            'shrink-0 rounded-lg border px-2 py-1 text-xs font-medium transition',
+                            solo
+                              ? 'border-teal-700 bg-accent-soft text-ink'
+                              : 'border-line bg-paper text-muted hover:border-teal-600/40',
+                          ].join(' ')}
+                        >
+                          Solo
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
         </section>
       </div>
