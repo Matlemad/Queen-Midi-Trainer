@@ -33,12 +33,9 @@ public/midi/
 
 All’avvio di `dev` e in `build`, un plugin Vite legge quella cartella e genera `src/midi-manifest.json`. I nuovi file compaiono nella lista dopo il rebuild o la ricarica del server di sviluppo.
 
-Sono inclusi due placeholder di pratica:
-
-- `pratica-c-maggiore.mid`
-- `pratica-a-minore.mid`
-
-Sostituiscili o aggiungi le tue basi Queen (o altre) lasciando i file in `public/midi/`.
+I file Queen attualmente in `public/midi/` provengono dai download pubblici gratuiti di
+[queensongs.info/midi/queen](https://www.queensongs.info/midi/queen).
+Puoi aggiungere altri `.mid` nella stessa cartella.
 
 ## Controlli
 

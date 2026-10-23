@@ -1,12 +1,647 @@
 [
   {
-    "id": "pratica-a-minore.mid",
-    "name": "Pratica A Minore",
-    "url": "/midi/pratica-a-minore.mid"
+    "id": "39.mid",
+    "name": "39",
+    "url": "/midi/39.mid"
   },
   {
-    "id": "pratica-c-maggiore.mid",
-    "name": "Pratica C Maggiore",
-    "url": "/midi/pratica-c-maggiore.mid"
+    "id": "a-kind-of-magic.mid",
+    "name": "A Kind Of Magic",
+    "url": "/midi/a-kind-of-magic.mid"
+  },
+  {
+    "id": "a-winters-tale.mid",
+    "name": "A Winters Tale",
+    "url": "/midi/a-winters-tale.mid"
+  },
+  {
+    "id": "all-dead-all-dead.mid",
+    "name": "All Dead All Dead",
+    "url": "/midi/all-dead-all-dead.mid"
+  },
+  {
+    "id": "all-gods-people.mid",
+    "name": "All Gods People",
+    "url": "/midi/all-gods-people.mid"
+  },
+  {
+    "id": "another-one-bites-the-dust.mid",
+    "name": "Another One Bites The Dust",
+    "url": "/midi/another-one-bites-the-dust.mid"
+  },
+  {
+    "id": "back-chat.mid",
+    "name": "Back Chat",
+    "url": "/midi/back-chat.mid"
+  },
+  {
+    "id": "bicycle-race.mid",
+    "name": "Bicycle Race",
+    "url": "/midi/bicycle-race.mid"
+  },
+  {
+    "id": "bijou.mid",
+    "name": "Bijou",
+    "url": "/midi/bijou.mid"
+  },
+  {
+    "id": "bohemian-rhapsody.mid",
+    "name": "Bohemian Rhapsody",
+    "url": "/midi/bohemian-rhapsody.mid"
+  },
+  {
+    "id": "breaktrhu.mid",
+    "name": "Breaktrhu",
+    "url": "/midi/breaktrhu.mid"
+  },
+  {
+    "id": "brighton-rock.mid",
+    "name": "Brighton Rock",
+    "url": "/midi/brighton-rock.mid"
+  },
+  {
+    "id": "bring-back-that-leroy-brown.mid",
+    "name": "Bring Back That Leroy Brown",
+    "url": "/midi/bring-back-that-leroy-brown.mid"
+  },
+  {
+    "id": "coming-soon.mid",
+    "name": "Coming Soon",
+    "url": "/midi/coming-soon.mid"
+  },
+  {
+    "id": "crazy-little-thing-called-love.mid",
+    "name": "Crazy Little Thing Called Love",
+    "url": "/midi/crazy-little-thing-called-love.mid"
+  },
+  {
+    "id": "dear-friends.mid",
+    "name": "Dear Friends",
+    "url": "/midi/dear-friends.mid"
+  },
+  {
+    "id": "death-on-two-legs.mid",
+    "name": "Death On Two Legs",
+    "url": "/midi/death-on-two-legs.mid"
+  },
+  {
+    "id": "doing-allright.mid",
+    "name": "Doing Allright",
+    "url": "/midi/doing-allright.mid"
+  },
+  {
+    "id": "dont-stop-me-now.mid",
+    "name": "Dont Stop Me Now",
+    "url": "/midi/dont-stop-me-now.mid"
+  },
+  {
+    "id": "dont-try-so-hard.mid",
+    "name": "Dont Try So Hard",
+    "url": "/midi/dont-try-so-hard.mid"
+  },
+  {
+    "id": "dragon-attack.mid",
+    "name": "Dragon Attack",
+    "url": "/midi/dragon-attack.mid"
+  },
+  {
+    "id": "dreamers-ball.mid",
+    "name": "Dreamers Ball",
+    "url": "/midi/dreamers-ball.mid"
+  },
+  {
+    "id": "drowse.mid",
+    "name": "Drowse",
+    "url": "/midi/drowse.mid"
+  },
+  {
+    "id": "fat-bottomed-girls.mid",
+    "name": "Fat Bottomed Girls",
+    "url": "/midi/fat-bottomed-girls.mid"
+  },
+  {
+    "id": "father-to-son.mid",
+    "name": "Father To Son",
+    "url": "/midi/father-to-son.mid"
+  },
+  {
+    "id": "fight-from-the-inside.mid",
+    "name": "Fight From The Inside",
+    "url": "/midi/fight-from-the-inside.mid"
+  },
+  {
+    "id": "flash.mid",
+    "name": "Flash",
+    "url": "/midi/flash.mid"
+  },
+  {
+    "id": "flick-of-the-wrist.mid",
+    "name": "Flick Of The Wrist",
+    "url": "/midi/flick-of-the-wrist.mid"
+  },
+  {
+    "id": "forever.mid",
+    "name": "Forever",
+    "url": "/midi/forever.mid"
+  },
+  {
+    "id": "friends-will-be-friends.mid",
+    "name": "Friends Will Be Friends",
+    "url": "/midi/friends-will-be-friends.mid"
+  },
+  {
+    "id": "fun-it.mid",
+    "name": "Fun It",
+    "url": "/midi/fun-it.mid"
+  },
+  {
+    "id": "funny-how-love-is.mid",
+    "name": "Funny How Love Is",
+    "url": "/midi/funny-how-love-is.mid"
+  },
+  {
+    "id": "get-down-make-love.mid",
+    "name": "Get Down Make Love",
+    "url": "/midi/get-down-make-love.mid"
+  },
+  {
+    "id": "god-save-the-queen.mid",
+    "name": "God Save The Queen",
+    "url": "/midi/god-save-the-queen.mid"
+  },
+  {
+    "id": "good-company.mid",
+    "name": "Good Company",
+    "url": "/midi/good-company.mid"
+  },
+  {
+    "id": "good-old-fashioned-lover-boy.mid",
+    "name": "Good Old Fashioned Lover Boy",
+    "url": "/midi/good-old-fashioned-lover-boy.mid"
+  },
+  {
+    "id": "hammer-to-fall.mid",
+    "name": "Hammer To Fall",
+    "url": "/midi/hammer-to-fall.mid"
+  },
+  {
+    "id": "headlong.mid",
+    "name": "Headlong",
+    "url": "/midi/headlong.mid"
+  },
+  {
+    "id": "heaven-for-everyone.mid",
+    "name": "Heaven For Everyone",
+    "url": "/midi/heaven-for-everyone.mid"
+  },
+  {
+    "id": "i-cant-live-with-you.mid",
+    "name": "I Cant Live With You",
+    "url": "/midi/i-cant-live-with-you.mid"
+  },
+  {
+    "id": "i-want-it-all.mid",
+    "name": "I Want It All",
+    "url": "/midi/i-want-it-all.mid"
+  },
+  {
+    "id": "i-want-to-break-free.mid",
+    "name": "I Want To Break Free",
+    "url": "/midi/i-want-to-break-free.mid"
+  },
+  {
+    "id": "i-was-born-to-love-you.mid",
+    "name": "I Was Born To Love You",
+    "url": "/midi/i-was-born-to-love-you.mid"
+  },
+  {
+    "id": "im-going-slightly-mad.mid",
+    "name": "Im Going Slightly Mad",
+    "url": "/midi/im-going-slightly-mad.mid"
+  },
+  {
+    "id": "im-in-love-with-my-car.mid",
+    "name": "Im In Love With My Car",
+    "url": "/midi/im-in-love-with-my-car.mid"
+  },
+  {
+    "id": "in-only-seven-days.mid",
+    "name": "In Only Seven Days",
+    "url": "/midi/in-only-seven-days.mid"
+  },
+  {
+    "id": "in-the-lap-of-the-gods.mid",
+    "name": "In The Lap Of The Gods",
+    "url": "/midi/in-the-lap-of-the-gods.mid"
+  },
+  {
+    "id": "innuendo.mid",
+    "name": "Innuendo",
+    "url": "/midi/innuendo.mid"
+  },
+  {
+    "id": "is-this-the-world-we-created.mid",
+    "name": "Is This The World We Created",
+    "url": "/midi/is-this-the-world-we-created.mid"
+  },
+  {
+    "id": "its-a-beautiful-day-reprise.mid",
+    "name": "Its A Beautiful Day Reprise",
+    "url": "/midi/its-a-beautiful-day-reprise.mid"
+  },
+  {
+    "id": "its-a-beautiful-day.mid",
+    "name": "Its A Beautiful Day",
+    "url": "/midi/its-a-beautiful-day.mid"
+  },
+  {
+    "id": "its-a-hard-life.mid",
+    "name": "Its A Hard Life",
+    "url": "/midi/its-a-hard-life.mid"
+  },
+  {
+    "id": "its-late.mid",
+    "name": "Its Late",
+    "url": "/midi/its-late.mid"
+  },
+  {
+    "id": "jealousy.mid",
+    "name": "Jealousy",
+    "url": "/midi/jealousy.mid"
+  },
+  {
+    "id": "jesus.mid",
+    "name": "Jesus",
+    "url": "/midi/jesus.mid"
+  },
+  {
+    "id": "keep-yourself-alive.mid",
+    "name": "Keep Yourself Alive",
+    "url": "/midi/keep-yourself-alive.mid"
+  },
+  {
+    "id": "killer-queen.mid",
+    "name": "Killer Queen",
+    "url": "/midi/killer-queen.mid"
+  },
+  {
+    "id": "lazing-on-a-sunday-afternoon.mid",
+    "name": "Lazing On A Sunday Afternoon",
+    "url": "/midi/lazing-on-a-sunday-afternoon.mid"
+  },
+  {
+    "id": "leaving-home-aint-easy.mid",
+    "name": "Leaving Home Aint Easy",
+    "url": "/midi/leaving-home-aint-easy.mid"
+  },
+  {
+    "id": "let-me-entertain-you.mid",
+    "name": "Let Me Entertain You",
+    "url": "/midi/let-me-entertain-you.mid"
+  },
+  {
+    "id": "let-me-live.mid",
+    "name": "Let Me Live",
+    "url": "/midi/let-me-live.mid"
+  },
+  {
+    "id": "liar.mid",
+    "name": "Liar",
+    "url": "/midi/liar.mid"
+  },
+  {
+    "id": "life-is-real.mid",
+    "name": "Life Is Real",
+    "url": "/midi/life-is-real.mid"
+  },
+  {
+    "id": "lily-of-the-walley.mid",
+    "name": "Lily Of The Walley",
+    "url": "/midi/lily-of-the-walley.mid"
+  },
+  {
+    "id": "long-away.mid",
+    "name": "Long Away",
+    "url": "/midi/long-away.mid"
+  },
+  {
+    "id": "love-of-my-life-live-killers.mid",
+    "name": "Love Of My Life Live Killers",
+    "url": "/midi/love-of-my-life-live-killers.mid"
+  },
+  {
+    "id": "love-of-my-life-piano-arr.mid",
+    "name": "Love Of My Life Piano Arr",
+    "url": "/midi/love-of-my-life-piano-arr.mid"
+  },
+  {
+    "id": "love-of-my-life.mid",
+    "name": "Love Of My Life",
+    "url": "/midi/love-of-my-life.mid"
+  },
+  {
+    "id": "made-in-heaven.mid",
+    "name": "Made In Heaven",
+    "url": "/midi/made-in-heaven.mid"
+  },
+  {
+    "id": "marriage-of-dale-and-ming.mid",
+    "name": "Marriage Of Dale And Ming",
+    "url": "/midi/marriage-of-dale-and-ming.mid"
+  },
+  {
+    "id": "misfire.mid",
+    "name": "Misfire",
+    "url": "/midi/misfire.mid"
+  },
+  {
+    "id": "more-of-that-jazz.mid",
+    "name": "More Of That Jazz",
+    "url": "/midi/more-of-that-jazz.mid"
+  },
+  {
+    "id": "mother.mid",
+    "name": "Mother",
+    "url": "/midi/mother.mid"
+  },
+  {
+    "id": "mustapha.mid",
+    "name": "Mustapha",
+    "url": "/midi/mustapha.mid"
+  },
+  {
+    "id": "my-fairy-king.mid",
+    "name": "My Fairy King",
+    "url": "/midi/my-fairy-king.mid"
+  },
+  {
+    "id": "my-life-has-been-saved.mid",
+    "name": "My Life Has Been Saved",
+    "url": "/midi/my-life-has-been-saved.mid"
+  },
+  {
+    "id": "my-melancholy-blues.mid",
+    "name": "My Melancholy Blues",
+    "url": "/midi/my-melancholy-blues.mid"
+  },
+  {
+    "id": "need-your-loving-tonight.mid",
+    "name": "Need Your Loving Tonight",
+    "url": "/midi/need-your-loving-tonight.mid"
+  },
+  {
+    "id": "nevermore.mid",
+    "name": "Nevermore",
+    "url": "/midi/nevermore.mid"
+  },
+  {
+    "id": "no-one-but-you.mid",
+    "name": "No One But You",
+    "url": "/midi/no-one-but-you.mid"
+  },
+  {
+    "id": "now-im-here.mid",
+    "name": "Now Im Here",
+    "url": "/midi/now-im-here.mid"
+  },
+  {
+    "id": "ogre-battle.mid",
+    "name": "Ogre Battle",
+    "url": "/midi/ogre-battle.mid"
+  },
+  {
+    "id": "one-vision.mid",
+    "name": "One Vision",
+    "url": "/midi/one-vision.mid"
+  },
+  {
+    "id": "one-year-of-love.mid",
+    "name": "One Year Of Love",
+    "url": "/midi/one-year-of-love.mid"
+  },
+  {
+    "id": "play-the-game.mid",
+    "name": "Play The Game",
+    "url": "/midi/play-the-game.mid"
+  },
+  {
+    "id": "princes-of-the-universe.mid",
+    "name": "Princes Of The Universe",
+    "url": "/midi/princes-of-the-universe.mid"
+  },
+  {
+    "id": "procession.mid",
+    "name": "Procession",
+    "url": "/midi/procession.mid"
+  },
+  {
+    "id": "put-out-the-fire.mid",
+    "name": "Put Out The Fire",
+    "url": "/midi/put-out-the-fire.mid"
+  },
+  {
+    "id": "radio-ga-ga.mid",
+    "name": "Radio Ga Ga",
+    "url": "/midi/radio-ga-ga.mid"
+  },
+  {
+    "id": "sail-away-sweet-sister.mid",
+    "name": "Sail Away Sweet Sister",
+    "url": "/midi/sail-away-sweet-sister.mid"
+  },
+  {
+    "id": "save-me.mid",
+    "name": "Save Me",
+    "url": "/midi/save-me.mid"
+  },
+  {
+    "id": "scandal.mid",
+    "name": "Scandal",
+    "url": "/midi/scandal.mid"
+  },
+  {
+    "id": "seaside-rendezvous.mid",
+    "name": "Seaside Rendezvous",
+    "url": "/midi/seaside-rendezvous.mid"
+  },
+  {
+    "id": "seven-seas-of-rhye.mid",
+    "name": "Seven Seas Of Rhye",
+    "url": "/midi/seven-seas-of-rhye.mid"
+  },
+  {
+    "id": "she-makes-me.mid",
+    "name": "She Makes Me",
+    "url": "/midi/she-makes-me.mid"
+  },
+  {
+    "id": "sheer-heart-attack.mid",
+    "name": "Sheer Heart Attack",
+    "url": "/midi/sheer-heart-attack.mid"
+  },
+  {
+    "id": "sleeping-on-the-sidewalk.mid",
+    "name": "Sleeping On The Sidewalk",
+    "url": "/midi/sleeping-on-the-sidewalk.mid"
+  },
+  {
+    "id": "some-day-one-day.mid",
+    "name": "Some Day One Day",
+    "url": "/midi/some-day-one-day.mid"
+  },
+  {
+    "id": "somebody-to-love.mid",
+    "name": "Somebody To Love",
+    "url": "/midi/somebody-to-love.mid"
+  },
+  {
+    "id": "son-and-daughter.mid",
+    "name": "Son And Daughter",
+    "url": "/midi/son-and-daughter.mid"
+  },
+  {
+    "id": "spread-your-wings.mid",
+    "name": "Spread Your Wings",
+    "url": "/midi/spread-your-wings.mid"
+  },
+  {
+    "id": "staying-power.mid",
+    "name": "Staying Power",
+    "url": "/midi/staying-power.mid"
+  },
+  {
+    "id": "stone-cold-crazy.mid",
+    "name": "Stone Cold Crazy",
+    "url": "/midi/stone-cold-crazy.mid"
+  },
+  {
+    "id": "tenement-funster.mid",
+    "name": "Tenement Funster",
+    "url": "/midi/tenement-funster.mid"
+  },
+  {
+    "id": "teo-torriate.mid",
+    "name": "Teo Torriate",
+    "url": "/midi/teo-torriate.mid"
+  },
+  {
+    "id": "the-fairy-fellers-masterstroke.mid",
+    "name": "The Fairy Fellers Masterstroke",
+    "url": "/midi/the-fairy-fellers-masterstroke.mid"
+  },
+  {
+    "id": "the-invisible-man.mid",
+    "name": "The Invisible Man",
+    "url": "/midi/the-invisible-man.mid"
+  },
+  {
+    "id": "the-loser-in-the-end.mid",
+    "name": "The Loser In The End",
+    "url": "/midi/the-loser-in-the-end.mid"
+  },
+  {
+    "id": "the-march-of-the-black-queen.mid",
+    "name": "The March Of The Black Queen",
+    "url": "/midi/the-march-of-the-black-queen.mid"
+  },
+  {
+    "id": "the-milionaire-waltz.mid",
+    "name": "The Milionaire Waltz",
+    "url": "/midi/the-milionaire-waltz.mid"
+  },
+  {
+    "id": "the-miracle.mid",
+    "name": "The Miracle",
+    "url": "/midi/the-miracle.mid"
+  },
+  {
+    "id": "the-night-comes-down.mid",
+    "name": "The Night Comes Down",
+    "url": "/midi/the-night-comes-down.mid"
+  },
+  {
+    "id": "the-prophets-song.mid",
+    "name": "The Prophets Song",
+    "url": "/midi/the-prophets-song.mid"
+  },
+  {
+    "id": "the-show-must-go-on.mid",
+    "name": "The Show Must Go On",
+    "url": "/midi/the-show-must-go-on.mid"
+  },
+  {
+    "id": "these-are-the-days-of-our-lives.mid",
+    "name": "These Are The Days Of Our Lives",
+    "url": "/midi/these-are-the-days-of-our-lives.mid"
+  },
+  {
+    "id": "tie-your-mother-down.mid",
+    "name": "Tie Your Mother Down",
+    "url": "/midi/tie-your-mother-down.mid"
+  },
+  {
+    "id": "too-much-love-will-kill-you.mid",
+    "name": "Too Much Love Will Kill You",
+    "url": "/midi/too-much-love-will-kill-you.mid"
+  },
+  {
+    "id": "under-pressure.mid",
+    "name": "Under Pressure",
+    "url": "/midi/under-pressure.mid"
+  },
+  {
+    "id": "was-it-all-worth-it.mid",
+    "name": "Was It All Worth It",
+    "url": "/midi/was-it-all-worth-it.mid"
+  },
+  {
+    "id": "we-are-the-champions.mid",
+    "name": "We Are The Champions",
+    "url": "/midi/we-are-the-champions.mid"
+  },
+  {
+    "id": "we-will-rock-you.mid",
+    "name": "We Will Rock You",
+    "url": "/midi/we-will-rock-you.mid"
+  },
+  {
+    "id": "white-man.mid",
+    "name": "White Man",
+    "url": "/midi/white-man.mid"
+  },
+  {
+    "id": "white-queen.mid",
+    "name": "White Queen",
+    "url": "/midi/white-queen.mid"
+  },
+  {
+    "id": "who-needs-you.mid",
+    "name": "Who Needs You",
+    "url": "/midi/who-needs-you.mid"
+  },
+  {
+    "id": "who-wants-to-live-forever.mid",
+    "name": "Who Wants To Live Forever",
+    "url": "/midi/who-wants-to-live-forever.mid"
+  },
+  {
+    "id": "you-and-i.mid",
+    "name": "You And I",
+    "url": "/midi/you-and-i.mid"
+  },
+  {
+    "id": "you-dont-fool-me.mid",
+    "name": "You Dont Fool Me",
+    "url": "/midi/you-dont-fool-me.mid"
+  },
+  {
+    "id": "you-take-my-breath-away.mid",
+    "name": "You Take My Breath Away",
+    "url": "/midi/you-take-my-breath-away.mid"
+  },
+  {
+    "id": "youre-my-best-friend.mid",
+    "name": "Youre My Best Friend",
+    "url": "/midi/youre-my-best-friend.mid"
   }
 ]
