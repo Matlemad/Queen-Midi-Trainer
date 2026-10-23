@@ -50,9 +50,18 @@ export function useMidiPlayer() {
   const startProgressLoop = useCallback(() => {
     stopProgressLoop()
     const tick = () => {
+      const transportState = Tone.Transport.state
+      // Keep React status aligned with the singleton Transport (HMR / remount safe).
+      if (transportState === 'started') {
+        setStatus((s) => (s === 'playing' ? s : 'playing'))
+      } else if (transportState === 'paused') {
+        setStatus((s) => (s === 'paused' ? s : 'paused'))
+      }
+
       const total = loadedRef.current?.duration ?? 0
       if (total > 0) {
-        setProgress(Math.min(Tone.Transport.seconds, total))
+        const seconds = Tone.Transport.seconds
+        setProgress(loopRef.current ? seconds % total : Math.min(seconds, total))
       }
       rafRef.current = requestAnimationFrame(tick)
     }
@@ -158,12 +167,13 @@ export function useMidiPlayer() {
   const play = useCallback(async () => {
     if (!loadedRef.current) return
     setError(null)
+    // Optimistic UI so Play → Pausa flips before Tone.start() resolves.
+    setStatus('playing')
+    startProgressLoop()
     try {
       await Tone.start()
       ensureSynth()
       if (Tone.Transport.state === 'started') {
-        setStatus('playing')
-        startProgressLoop()
         return
       }
       if (
@@ -174,13 +184,12 @@ export function useMidiPlayer() {
         setProgress(0)
       }
       Tone.Transport.start()
-      setStatus('playing')
-      startProgressLoop()
     } catch (err) {
+      stopProgressLoop()
       setStatus('error')
       setError(err instanceof Error ? err.message : 'Impossibile avviare l’audio')
     }
-  }, [ensureSynth, startProgressLoop])
+  }, [ensureSynth, startProgressLoop, stopProgressLoop])
 
   const pause = useCallback(() => {
     Tone.Transport.pause()

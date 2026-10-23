@@ -180,7 +180,12 @@ export default function App() {
             <button
               type="button"
               disabled={!canControl}
-              onClick={() => void (isPlaying ? player.pause() : player.play())}
+              aria-pressed={isPlaying}
+              aria-label={isPlaying ? 'Metti in pausa' : 'Avvia riproduzione'}
+              onClick={() => {
+                if (isPlaying) player.pause()
+                else void player.play()
+              }}
               className="min-w-28 rounded-xl bg-accent px-4 py-2.5 font-medium text-white transition hover:bg-teal-800 disabled:hover:bg-accent"
             >
               {isPlaying ? 'Pausa' : 'Play'}
