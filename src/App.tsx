@@ -49,7 +49,8 @@ export default function App() {
   }, [selected, load, getTempo, applyTranspose])
 
   const isBusy = player.status === 'loading'
-  const canControl = Boolean(selected) && player.status !== 'loading' && player.status !== 'error'
+  const canControl =
+    Boolean(selected) && player.status !== 'loading' && player.status !== 'error'
   const isPlaying = player.status === 'playing'
 
   const onSelect = (id: string) => {
@@ -68,6 +69,8 @@ export default function App() {
     player.setTranspose(value)
   }
 
+  const sfPct = Math.round(player.soundfontProgress * 100)
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-10">
       <header className="space-y-2">
@@ -78,8 +81,8 @@ export default function App() {
           Pratica con le basi MIDI
         </h1>
         <p className="max-w-2xl text-muted">
-          Scegli una base, poi regola tonalità e tempo mentre suoni. Ogni traccia ha un timbro
-          distinto (chitarra, basso, batteria, ecc.). Aggiungi file
+          Scegli una base, poi regola tonalità e tempo. I timbri sono campioni GM
+          (MuseScore General / FluidR3). Aggiungi file
           <code className="mx-1 rounded bg-white/70 px-1.5 py-0.5 text-sm text-ink">
             .mid
           </code>
@@ -162,6 +165,18 @@ export default function App() {
             </p>
           )}
 
+          {player.soundfontProgress > 0 && player.soundfontProgress < 1 && (
+            <p className="mb-4 text-sm text-muted" aria-live="polite">
+              Download soundfont GM… {sfPct}%
+            </p>
+          )}
+
+          {player.engineWarming && (
+            <p className="mb-4 text-sm text-muted" aria-live="polite">
+              Avvio motore audio…
+            </p>
+          )}
+
           <div className="mb-5 space-y-2">
             <div className="flex items-center justify-between text-sm text-muted">
               <span>{formatTime(player.progress)}</span>
@@ -183,7 +198,7 @@ export default function App() {
           <div className="mb-6 flex flex-wrap gap-2">
             <button
               type="button"
-              disabled={!canControl}
+              disabled={!canControl || player.engineWarming}
               aria-pressed={isPlaying}
               aria-label={isPlaying ? 'Metti in pausa' : 'Avvia riproduzione'}
               onClick={() => {
@@ -316,11 +331,19 @@ export default function App() {
       </div>
 
       <footer className="pb-2 text-sm text-muted">
-        I nuovi file in
+        Motore:
+        {' '}
+        <span className="text-ink">spessasynth_lib</span>
+        {' · '}
+        soundfont MuseScore General (GM). Nuovi
+        {' '}
+        <code className="rounded bg-white/70 px-1.5 py-0.5 text-ink">.mid</code>
+        {' '}
+        in
         {' '}
         <code className="rounded bg-white/70 px-1.5 py-0.5 text-ink">public/midi/</code>
         {' '}
-        compaiono automaticamente al rebuild / ricarica del dev server.
+        compaiono al rebuild.
       </footer>
     </div>
   )

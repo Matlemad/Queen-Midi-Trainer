@@ -1,17 +1,22 @@
 import { Midi } from '@tonejs/midi'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import * as Tone from 'tone'
 import {
-  createDrumKit,
-  createPitchedSynth,
-  kindFromInstrument,
-  labelForInstrument,
-  type DrumKit,
-  type PitchedInstrument,
-  type VoiceKind,
-} from './gmVoices'
+  applyChannelMutes,
+  applyKeyShift,
+  disposeEngine,
+  ensureEngine,
+  getEngine,
+  prefetchSoundfont,
+  DRUM_CHANNEL,
+} from './soundfontEngine'
 
-export type PlayerStatus = 'idle' | 'loading' | 'ready' | 'playing' | 'paused' | 'error'
+export type PlayerStatus =
+  | 'idle'
+  | 'loading'
+  | 'ready'
+  | 'playing'
+  | 'paused'
+  | 'error'
 
 export type TrackInfo = {
   id: string
@@ -23,68 +28,72 @@ export type TrackInfo = {
   noteCount: number
 }
 
-type ScheduledNote = {
-  time: number
-  midi: number
-  duration: number
-  velocity: number
+const FAMILY_IT: Record<string, string> = {
+  piano: 'Pianoforte',
+  'chromatic percussion': 'Percussioni',
+  organ: 'Organo',
+  guitar: 'Chitarra',
+  bass: 'Basso',
+  strings: 'Archi',
+  ensemble: 'Ensemble',
+  brass: 'Ottoni',
+  reed: 'Ance',
+  pipe: 'Fiati',
+  'synth lead': 'Synth lead',
+  'synth pad': 'Synth pad',
+  'synth effects': 'Effetti synth',
+  ethnic: 'Etnico',
+  percussive: 'Percussivo',
+  'sound effects': 'Effetti',
+  drums: 'Batteria',
 }
 
-type VoiceRuntime = {
-  info: TrackInfo
-  kind: VoiceKind
-  notes: ScheduledNote[]
-  channel: Tone.Channel
-  synth: PitchedInstrument | null
-  drums: DrumKit | null
-  part: Tone.Part | null
+function cleanName(name: string | undefined): string {
+  return (name ?? '')
+    .split('')
+    .filter((ch) => ch.charCodeAt(0) >= 32)
+    .join('')
+    .trim()
 }
 
-type LoadedMidi = {
-  url: string
-  duration: number
-  voices: VoiceRuntime[]
+function trackLabel(opts: {
+  trackName?: string
+  program: number
+  family: string
+  percussion: boolean
+  instrumentName: string
+}): string {
+  const cleaned = cleanName(opts.trackName)
+  if (cleaned && !/^(untitled|track\s*\d+)$/i.test(cleaned)) return cleaned
+  if (opts.percussion) return 'Batteria'
+  const fromFamily = FAMILY_IT[opts.family]
+  if (fromFamily) return fromFamily
+  const inst = cleanName(opts.instrumentName)
+  return inst || 'Strumento'
 }
 
-function buildVoices(midi: Midi): Omit<VoiceRuntime, 'channel' | 'synth' | 'drums' | 'part'>[] {
-  const voices: Omit<VoiceRuntime, 'channel' | 'synth' | 'drums' | 'part'>[] = []
-
+function parseTracks(midi: Midi): TrackInfo[] {
+  const tracks: TrackInfo[] = []
   midi.tracks.forEach((track, index) => {
     if (track.notes.length === 0) return
-
-    const isPercussion = track.instrument.percussion || track.channel === 9
-    const kind = kindFromInstrument(track.instrument.family, isPercussion)
-    const id = `t${index}-ch${track.channel}-p${track.instrument.number}`
-    const label = labelForInstrument({
-      trackName: track.name,
-      program: track.instrument.number,
-      family: track.instrument.family,
-      percussion: isPercussion,
-    })
-
-    const notes: ScheduledNote[] = track.notes.map((note) => ({
-      midi: note.midi,
-      time: note.time,
-      duration: Math.max(note.duration, isPercussion ? 0.03 : 0.05),
-      velocity: note.velocity,
-    }))
-
-    voices.push({
-      info: {
-        id,
-        label,
-        channel: track.channel,
+    const isPercussion = track.instrument.percussion || track.channel === DRUM_CHANNEL
+    tracks.push({
+      id: `t${index}-ch${track.channel}-p${track.instrument.number}`,
+      label: trackLabel({
+        trackName: track.name,
         program: track.instrument.number,
         family: track.instrument.family,
-        isPercussion,
-        noteCount: notes.length,
-      },
-      kind,
-      notes,
+        percussion: isPercussion,
+        instrumentName: track.instrument.name,
+      }),
+      channel: track.channel,
+      program: track.instrument.number,
+      family: track.instrument.family,
+      isPercussion,
+      noteCount: track.notes.length,
     })
   })
-
-  return voices
+  return tracks
 }
 
 export function useMidiPlayer() {
@@ -95,14 +104,19 @@ export function useMidiPlayer() {
   const [tracks, setTracks] = useState<TrackInfo[]>([])
   const [mutedIds, setMutedIds] = useState<string[]>([])
   const [soloIds, setSoloIds] = useState<string[]>([])
+  const [soundfontProgress, setSoundfontProgress] = useState(0)
+  const [engineWarming, setEngineWarming] = useState(false)
 
-  const loadedRef = useRef<LoadedMidi | null>(null)
-  const transposeRef = useRef(0)
-  const loopRef = useRef(true)
-  const rafRef = useRef<number | null>(null)
+  const midiBufferRef = useRef<ArrayBuffer | null>(null)
+  const midiUrlRef = useRef<string | null>(null)
+  const loadedSongUrlRef = useRef<string | null>(null)
+  const tracksRef = useRef<TrackInfo[]>([])
   const mutedRef = useRef<Set<string>>(new Set())
   const soloRef = useRef<Set<string>>(new Set())
-  const wasPlayingRef = useRef(false)
+  const transposeRef = useRef(0)
+  const tempoRef = useRef(100)
+  const baseTempoRef = useRef(100)
+  const rafRef = useRef<number | null>(null)
 
   const stopProgressLoop = useCallback(() => {
     if (rafRef.current != null) {
@@ -114,115 +128,99 @@ export function useMidiPlayer() {
   const startProgressLoop = useCallback(() => {
     stopProgressLoop()
     const tick = () => {
-      const transportState = Tone.Transport.state
-      if (transportState === 'started') {
-        setStatus((s) => (s === 'playing' ? s : 'playing'))
-      } else if (transportState === 'paused') {
-        setStatus((s) => (s === 'paused' ? s : 'paused'))
-      }
-
-      const total = loadedRef.current?.duration ?? 0
-      if (total > 0) {
-        const seconds = Tone.Transport.seconds
-        setProgress(loopRef.current ? seconds % total : Math.min(seconds, total))
+      const eng = getEngine()
+      if (eng) {
+        const seq = eng.sequencer
+        const total = seq.duration || duration
+        if (total > 0) {
+          setProgress(Math.min(seq.currentTime, total))
+        }
+        if (!seq.paused) {
+          setStatus((s) => (s === 'playing' ? s : 'playing'))
+        }
       }
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
-  }, [stopProgressLoop])
+  }, [duration, stopProgressLoop])
 
-  const applyMuteSolo = useCallback(() => {
-    const loaded = loadedRef.current
-    if (!loaded) return
+  const mutedChannelsFromState = useCallback((): Set<number> => {
+    const list = tracksRef.current
     const hasSolo = soloRef.current.size > 0
-    for (const voice of loaded.voices) {
+    const muted = new Set<number>()
+    for (const track of list) {
       const audible = hasSolo
-        ? soloRef.current.has(voice.info.id)
-        : !mutedRef.current.has(voice.info.id)
-      voice.channel.mute = !audible
+        ? soloRef.current.has(track.id)
+        : !mutedRef.current.has(track.id)
+      if (!audible) muted.add(track.channel)
     }
+    // If any audible track shares a channel with a muted one, prefer audible
+    // unless ALL tracks on that channel are muted/not-soloed.
+    for (const track of list) {
+      const audible = hasSolo
+        ? soloRef.current.has(track.id)
+        : !mutedRef.current.has(track.id)
+      if (audible) muted.delete(track.channel)
+    }
+    return muted
   }, [])
 
-  const disposeVoices = useCallback(() => {
-    const loaded = loadedRef.current
-    if (!loaded) return
-    for (const voice of loaded.voices) {
-      voice.part?.dispose()
-      voice.part = null
-      voice.synth?.dispose()
-      voice.synth = null
-      voice.drums?.dispose()
-      voice.drums = null
-      voice.channel.dispose()
-    }
-    loaded.voices = []
-  }, [])
+  const syncSynthControls = useCallback(() => {
+    const eng = getEngine()
+    if (!eng) return
+    applyChannelMutes(eng.synth, mutedChannelsFromState())
+    applyKeyShift(eng.synth, transposeRef.current)
+    const base = baseTempoRef.current || 100
+    const target = tempoRef.current || base
+    eng.sequencer.playbackRate = Math.min(3, Math.max(0.25, target / base))
+  }, [mutedChannelsFromState])
 
-  const scheduleParts = useCallback(() => {
-    const loaded = loadedRef.current
-    if (!loaded) return
+  const loadSongIntoSequencer = useCallback(async () => {
+    const eng = getEngine()
+    const buffer = midiBufferRef.current
+    const url = midiUrlRef.current
+    if (!eng || !buffer || !url) return
 
-    const transpose = transposeRef.current
-
-    for (const voice of loaded.voices) {
-      voice.part?.dispose()
-      voice.part = null
-
-      const isDrum = voice.info.isPercussion
-
-      const events = voice.notes.map((n) => ({
-        time: n.time,
-        midi: isDrum ? n.midi : Math.min(127, Math.max(0, n.midi + transpose)),
-        duration: n.duration,
-        velocity: n.velocity,
-      }))
-
-      const part = new Tone.Part((time, event) => {
-        if (isDrum && voice.drums) {
-          voice.drums.trigger(event.midi, event.duration, time, event.velocity)
-        } else if (voice.synth) {
-          voice.synth.triggerAttackRelease(
-            Tone.Frequency(event.midi, 'midi').toFrequency(),
-            event.duration,
-            time,
-            event.velocity,
-          )
-        }
-      }, events)
-
-      part.loop = loopRef.current
-      part.loopEnd = loaded.duration
-      part.start(0)
-      voice.part = part
+    if (loadedSongUrlRef.current === url) {
+      syncSynthControls()
+      return
     }
 
-    applyMuteSolo()
-  }, [applyMuteSolo])
-
-  const createRuntimeVoices = useCallback(
-    (partials: ReturnType<typeof buildVoices>): VoiceRuntime[] => {
-      return partials.map((partial) => {
-        const channel = new Tone.Channel({ volume: -4 }).toDestination()
-        let synth: PitchedInstrument | null = null
-        let drums: DrumKit | null = null
-
-        if (partial.info.isPercussion || partial.kind === 'drums') {
-          drums = createDrumKit(channel)
+    await new Promise<void>((resolve, reject) => {
+      const handler = eng.sequencer.eventHandler
+      const id = `song-ready-${Date.now()}`
+      const timeout = window.setTimeout(() => {
+        handler.removeEvent('songChange', id)
+        // Some builds still expose duration after load even without event
+        if (eng.sequencer.duration > 0) {
+          resolve()
         } else {
-          synth = createPitchedSynth(partial.kind, channel)
+          reject(new Error('Timeout caricamento sequenza MIDI'))
         }
+      }, 15000)
 
-        return {
-          ...partial,
-          channel,
-          synth,
-          drums,
-          part: null,
-        }
+      handler.addEvent('songChange', id, () => {
+        window.clearTimeout(timeout)
+        handler.removeEvent('songChange', id)
+        resolve()
       })
-    },
-    [],
-  )
+
+      eng.sequencer.loadNewSongList([
+        { binary: buffer.slice(0), fileName: url.split('/').pop() },
+      ])
+    })
+
+    loadedSongUrlRef.current = url
+    setDuration(eng.sequencer.duration || duration)
+    syncSynthControls()
+  }, [duration, syncSynthControls])
+
+  // Prefetch soundfont ASAP (no AudioContext).
+  useEffect(() => {
+    void prefetchSoundfont((ratio) => setSoundfontProgress(ratio)).catch(() => {
+      /* shown on Play if still missing */
+    })
+  }, [])
 
   const load = useCallback(
     async (url: string) => {
@@ -234,11 +232,16 @@ export function useMidiPlayer() {
       setSoloIds([])
       mutedRef.current = new Set()
       soloRef.current = new Set()
+      tracksRef.current = []
+      loadedSongUrlRef.current = null
       stopProgressLoop()
-      Tone.Transport.stop()
-      Tone.Transport.position = 0
-      disposeVoices()
-      loadedRef.current = null
+
+      const eng = getEngine()
+      if (eng) {
+        eng.sequencer.pause()
+        eng.synth.stopAll(true)
+        eng.sequencer.currentTime = 0
+      }
 
       try {
         const response = await fetch(url)
@@ -246,116 +249,120 @@ export function useMidiPlayer() {
           throw new Error(`Impossibile caricare il MIDI (${response.status})`)
         }
         const buffer = await response.arrayBuffer()
-        const midi = new Midi(buffer)
-        const partials = buildVoices(midi)
-        if (partials.length === 0) {
+        // Parse solo metadati/tracce — niente voci audio al load
+        const midi = new Midi(buffer.slice(0))
+        const parsed = parseTracks(midi)
+        if (parsed.length === 0) {
           throw new Error('Il file MIDI non contiene note riproducibili')
         }
 
-        const end = Math.max(
-          midi.duration,
-          ...partials.flatMap((v) => v.notes.map((n) => n.time + n.duration)),
-          1,
-        )
+        const end = Math.max(midi.duration, 1)
+        const bpm = midi.header.tempos[0]?.bpm ?? 100
 
-        const voices = createRuntimeVoices(partials)
-        loadedRef.current = { url, duration: end, voices }
+        midiBufferRef.current = buffer
+        midiUrlRef.current = url
+        tracksRef.current = parsed
+        baseTempoRef.current = bpm
+        tempoRef.current = Math.round(bpm)
+        transposeRef.current = 0
+
+        setTracks(parsed)
         setDuration(end)
-        setTracks(voices.map((v) => v.info))
-
-        const tempos = midi.header.tempos
-        Tone.Transport.bpm.value = tempos.length > 0 ? tempos[0].bpm : 100
-
-        scheduleParts()
         setStatus('ready')
       } catch (err) {
-        disposeVoices()
-        loadedRef.current = null
+        midiBufferRef.current = null
+        midiUrlRef.current = null
         setDuration(0)
         setTracks([])
         setStatus('error')
         setError(err instanceof Error ? err.message : 'Errore nel caricamento MIDI')
       }
     },
-    [createRuntimeVoices, disposeVoices, scheduleParts, stopProgressLoop],
+    [stopProgressLoop],
   )
 
   const play = useCallback(async () => {
-    if (!loadedRef.current) return
+    if (!midiBufferRef.current) return
     setError(null)
+    setEngineWarming(true)
+    // Optimistic UI
     setStatus('playing')
-    startProgressLoop()
     try {
-      await Tone.start()
-      if (Tone.Transport.state === 'started') {
-        return
-      }
+      const eng = await ensureEngine((ratio) => setSoundfontProgress(ratio))
+      await loadSongIntoSequencer()
+      syncSynthControls()
+
       if (
-        Tone.Transport.state === 'stopped' &&
-        Tone.Transport.seconds >= (loadedRef.current.duration ?? 0) - 0.05
+        eng.sequencer.duration > 0 &&
+        eng.sequencer.currentTime >= eng.sequencer.duration - 0.05
       ) {
-        Tone.Transport.seconds = 0
+        eng.sequencer.currentTime = 0
         setProgress(0)
       }
-      Tone.Transport.start()
+
+      eng.sequencer.play()
+      startProgressLoop()
     } catch (err) {
       stopProgressLoop()
       setStatus('error')
       setError(err instanceof Error ? err.message : 'Impossibile avviare l’audio')
+    } finally {
+      setEngineWarming(false)
     }
-  }, [startProgressLoop, stopProgressLoop])
+  }, [loadSongIntoSequencer, startProgressLoop, stopProgressLoop, syncSynthControls])
 
   const pause = useCallback(() => {
-    Tone.Transport.pause()
+    const eng = getEngine()
+    eng?.sequencer.pause()
     stopProgressLoop()
     setStatus('paused')
   }, [stopProgressLoop])
 
   const stop = useCallback(() => {
-    Tone.Transport.stop()
-    Tone.Transport.position = 0
+    const eng = getEngine()
+    if (eng) {
+      eng.sequencer.pause()
+      eng.sequencer.currentTime = 0
+      eng.synth.stopAll(true)
+    }
     stopProgressLoop()
     setProgress(0)
-    setStatus(loadedRef.current ? 'ready' : 'idle')
+    setStatus(midiBufferRef.current ? 'ready' : 'idle')
   }, [stopProgressLoop])
 
-  const setTempo = useCallback((bpm: number) => {
-    Tone.Transport.bpm.value = Math.min(240, Math.max(40, bpm))
-  }, [])
+  const setTempo = useCallback(
+    (bpm: number) => {
+      tempoRef.current = Math.min(240, Math.max(40, bpm))
+      const eng = getEngine()
+      if (eng) {
+        const base = baseTempoRef.current || 100
+        eng.sequencer.playbackRate = Math.min(
+          3,
+          Math.max(0.25, tempoRef.current / base),
+        )
+      }
+    },
+    [],
+  )
 
-  const getTempo = useCallback(() => Tone.Transport.bpm.value, [])
+  const getTempo = useCallback(() => tempoRef.current, [])
 
   const setTranspose = useCallback(
     (semitones: number) => {
       transposeRef.current = Math.round(semitones)
-      const playing = Tone.Transport.state === 'started'
-      const position = Tone.Transport.seconds
-      wasPlayingRef.current = playing
-
-      if (playing) {
-        Tone.Transport.pause()
-      }
-      scheduleParts()
-      Tone.Transport.seconds = position
-      setProgress(position)
-
-      if (wasPlayingRef.current) {
-        void Tone.start().then(() => {
-          Tone.Transport.start()
-          setStatus('playing')
-          startProgressLoop()
-        })
-      }
+      const eng = getEngine()
+      if (eng) applyKeyShift(eng.synth, transposeRef.current)
     },
-    [scheduleParts, startProgressLoop],
+    [],
   )
 
   const seek = useCallback((seconds: number) => {
-    const total = loadedRef.current?.duration ?? 0
+    const eng = getEngine()
+    const total = eng?.sequencer.duration || duration
     const next = Math.min(Math.max(0, seconds), Math.max(total, 0))
-    Tone.Transport.seconds = next
+    if (eng) eng.sequencer.currentTime = next
     setProgress(next)
-  }, [])
+  }, [duration])
 
   const toggleMute = useCallback(
     (id: string) => {
@@ -364,9 +371,10 @@ export function useMidiPlayer() {
       else next.add(id)
       mutedRef.current = next
       setMutedIds([...next])
-      applyMuteSolo()
+      const eng = getEngine()
+      if (eng) applyChannelMutes(eng.synth, mutedChannelsFromState())
     },
-    [applyMuteSolo],
+    [mutedChannelsFromState],
   )
 
   const toggleSolo = useCallback(
@@ -376,20 +384,18 @@ export function useMidiPlayer() {
       else next.add(id)
       soloRef.current = next
       setSoloIds([...next])
-      applyMuteSolo()
+      const eng = getEngine()
+      if (eng) applyChannelMutes(eng.synth, mutedChannelsFromState())
     },
-    [applyMuteSolo],
+    [mutedChannelsFromState],
   )
 
   useEffect(() => {
     return () => {
       stopProgressLoop()
-      disposeVoices()
-      Tone.Transport.stop()
-      Tone.Transport.cancel()
-      loadedRef.current = null
+      disposeEngine()
     }
-  }, [disposeVoices, stopProgressLoop])
+  }, [stopProgressLoop])
 
   return {
     status,
@@ -399,6 +405,8 @@ export function useMidiPlayer() {
     tracks,
     mutedIds,
     soloIds,
+    soundfontProgress,
+    engineWarming,
     load,
     play,
     pause,

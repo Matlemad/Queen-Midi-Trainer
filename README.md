@@ -11,10 +11,14 @@ App web semplice per esercitarsi con basi MIDI: scegli un file, poi play/pausa, 
 
 ```bash
 npm install
+npm run soundfont   # scarica MuseScore_General.sf3 (~38 MB) se manca
 npm run dev
 ```
 
 L’app parte su [http://127.0.0.1:43127](http://127.0.0.1:43127).
+
+Playback: **spessasynth_lib** + soundfont GM **MuseScore General** (campioni, non synth Tone).
+L’AudioContext parte solo al primo Play.
 
 Build di produzione:
 

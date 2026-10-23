@@ -7,13 +7,17 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "soundfont": "node scripts/ensure-soundfont.mjs",
+    "predev": "npm run soundfont",
+    "prebuild": "npm run soundfont"
   },
   "dependencies": {
     "@tonejs/midi": "^2.0.28",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "tone": "^15.1.22"
+    "spessasynth_core": "^4.3.22",
+    "spessasynth_lib": "^4.3.14"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
